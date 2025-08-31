@@ -68,28 +68,98 @@ def delete_department():
 # You'll implement the employee functions in the lab
 
 def list_employees():
-    pass
+    """List all employees"""
+    for emp in Employee.all():
+        print(emp)
 
 
 def find_employee_by_name():
-    pass
+    """Find employee by name"""
+    name = input("Enter the employee's name: ")
+    emp = Employee.find_by_name(name)
+    if emp:
+        print(emp)
+    else:
+        print(f"Employee {name} not found")
 
 
 def find_employee_by_id():
-    pass
+    """Find employee by id"""
+    emp_id = input("Enter the employee's id: ")
+    emp = Employee.find_by_id(emp_id)
+    if emp:
+        print(emp)
+    else:
+        print(f"Employee {emp_id} not found")
 
 
 def create_employee():
-    pass
+    """Create a new employee"""
+    try:
+        name = input("Enter the employee's name: ")
+        job_title = input("Enter the employee's job title: ")
+        dept_id = input("Enter the employee's department id: ")
+
+        dept = Department.find_by_id(dept_id)
+        if not dept:
+            raise ValueError("department_id must reference a department in the database")
+
+        emp = Employee(name=name, job_title=job_title, department_id=dept_id)
+        emp.save()
+        print(f"Success: {emp}")
+    except Exception as e:
+        print(f"Error creating employee: {e}")
 
 
 def update_employee():
-    pass
+    """Update an existing employee"""
+    emp_id = input("Enter the employee's id: ")
+    emp = Employee.find_by_id(emp_id)
+    if not emp:
+        print(f"Employee {emp_id} not found")
+        return
+
+    try:
+        new_name = input("Enter the employee's new name: ")
+        if new_name:
+            emp.name = new_name
+
+        new_job_title = input("Enter the employee's new job title: ")
+        if new_job_title:
+            emp.job_title = new_job_title
+
+        new_dept_id = input("Enter the employee's new department id: ")
+        if new_dept_id:
+            dept = Department.find_by_id(new_dept_id)
+            if not dept:
+                raise ValueError("department_id must reference a department in the database")
+            emp.department_id = new_dept_id
+
+        emp.save()
+        print(f"Success: {emp}")
+    except Exception as e:
+        print(f"Error updating employee: {e}")
 
 
 def delete_employee():
-    pass
+    """Delete an employee"""
+    emp_id = input("Enter the employee's id: ")
+    emp = Employee.find_by_id(emp_id)
+    if not emp:
+        print(f"Employee {emp_id} not found")
+        return
+
+    emp.delete()
+    print(f"Employee {emp_id} deleted")
 
 
 def list_department_employees():
-    pass
+    """List all employees in a department"""
+    dept_id = input("Enter the department's id: ")
+    dept = Department.find_by_id(dept_id)
+    if not dept:
+        print(f"Department {dept_id} not found")
+        return
+
+    for emp in dept.employees():
+        print(emp)
